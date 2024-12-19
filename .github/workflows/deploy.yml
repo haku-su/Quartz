@@ -30,12 +30,24 @@ jobs:
         run: npm ci
 
       - name: Build Quartz
-        run: npx quartz build
+        run: |
+          npx quartz build --serve &
+          QUARTZ_PID=$!
+          
+          echo "Waiting for Quartz build to finish..."
+          sleep 60
+
+          echo "Killing Quartz server..."
+          kill $QUARTZ_PID || echo "Quartz server already stopped"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and Push Public Folder
         run: |
