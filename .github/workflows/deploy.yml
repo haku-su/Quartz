@@ -30,15 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build Quartz
-        run: |
-          npx quartz build --serve &
-          QUARTZ_PID=$!
-          
-          echo "Waiting for Quartz build to finish..."
-          sleep 60
-
-          echo "Killing Quartz server..."
-          kill $QUARTZ_PID || echo "Quartz server already stopped"
+        run: npx quartz build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
