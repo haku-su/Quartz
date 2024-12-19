@@ -1,4 +1,4 @@
-name: Deploy Quartz site to GitHub Pages and Repository Public Folder
+name: Deploy Quartz site to GitHub Pages and Public Folder
 
 on:
   push:
@@ -15,12 +15,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for git info
+          fetch-depth: 0 # Fetch all history for committing to the branch
 
       - uses: actions/setup-node@v4
         with:
@@ -32,7 +32,12 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
-      - name: Commit and Push "public" Folder
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and Push Public Folder
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
